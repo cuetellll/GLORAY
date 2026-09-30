@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self'" />
+  <title>GlowRay</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="s-disconnected">
+  <canvas id="bg"></canvas>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="noise"></div>
+
+  <header class="titlebar">
+    <div class="brand"><span class="logo"></span><b>GlowRay</b><small id="coreVer">sing-box</small></div>
+    <div class="win-btns">
+      <button id="wMin" title="کوچک‌سازی"><svg viewBox="0 0 12 12"><path d="M2 6h8"/></svg></button>
+      <button id="wMax" title="بزرگ‌نمایی"><svg viewBox="0 0 12 12"><rect x="2.5" y="2.5" width="7" height="7" rx="1"/></svg></button>
+      <button id="wClose" class="close" title="بستن به تری"><svg viewBox="0 0 12 12"><path d="M3 3l6 6M9 3l-6 6"/></svg></button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="stage">
+      <div class="mode-switch" id="modeSwitch">
+        <div class="pill"></div>
+        <button data-mode="proxy"><svg viewBox="0 0 24 24"><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/><circle cx="12" cy="12" r="9"/></svg>پروکسی سیستم</button>
+        <button data-mode="tun"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg>تونل کامل (TUN)</button>
+      </div>
+
+      <div class="orb-wrap">
+        <div class="ripple"></div><div class="ripple d2"></div><div class="ripple d3"></div>
+        <div class="halo"></div>
+        <div class="ring"></div>
+        <div class="ring inner"></div>
+        <button class="orb" id="btnConnect">
+          <svg class="power" viewBox="0 0 24 24"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg>
+          <span id="orbLabel">اتصال</span>
+        </button>
+      </div>
+
+      <div class="status-line"><span class="dot"></span><span id="statusText">متصل نیستید</span></div>
+      <div class="step" id="stepText">با یک کلیک به سریع‌ترین سرور وصل شوید</div>
+      <div class="timer" id="timer">00:00:00</div>
+
+      <div class="current glass" id="currentCard">
+        <div class="cur-ico" id="curIco">⚡</div>
+        <div class="cur-body">
+          <div class="cur-label" id="curLabel">سرور انتخابی</div>
+          <div class="cur-name" id="curName">بهترین سرور (خودکار)</div>
+        </div>
+        <div class="cur-delay" id="curDelay"></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat glass">
+          <div class="stat-ico down"><svg viewBox="0 0 24 24"><path d="M12 4v14M6 12l6 6 6-6"/></svg></div>
+          <div><div class="stat-val" id="downSpeed">0 B/s</div><div class="stat-sub">دانلود · <span id="downTotal">0 B</span></div></div>
+        </div>
+        <div class="stat glass">
+          <div class="stat-ico up"><svg viewBox="0 0 24 24"><path d="M12 20V6M6 12l6-6 6 6"/></svg></div>
+          <div><div class="stat-val" id="upSpeed">0 B/s</div><div class="stat-sub">آپلود · <span id="upTotal">0 B</span></div></div>
+        </div>
+      </div>
+      <canvas id="spark" class="spark"></canvas>
+    </section>
+
+    <aside class="panel glass">
+      <div class="panel-head">
+        <h3>سرورها <span class="badge" id="count">0</span></h3>
+        <div class="actions">
+          <button class="icon-btn" id="btnTest" title="تست پینگ / سرعت واقعی"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></button>
+          <button class="icon-btn" id="btnUpdate" title="بروزرسانی لیست"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button>
+          <button class="icon-btn" id="btnSettings" title="تنظیمات"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+        </div>
+      </div>
+      <div class="search-wrap"><input id="search" class="search" placeholder="جستجوی سرور..." /></div>
+      <div class="list" id="list"></div>
+      <button class="log-toggle" id="btnLog"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>لاگ‌ها</button>
+    </aside>
+  </main>
+
+  <div class="drawer glass" id="logDrawer">
+    <div class="drawer-head"><b>لاگ sing-box</b><div><button class="chip" id="btnClearLog">پاک کردن</button><button class="chip" id="btnCloseLog">بستن</button></div></div>
+    <pre id="log" dir="ltr"></pre>
+  </div>
+
+  <div class="modal" id="settingsModal">
+    <div class="modal-card glass">
+      <h3>تنظیمات</h3>
+      <label>لینک(های) ساب‌اسکریپشن <small>(هر خط یک لینک)</small></label>
+      <textarea id="subUrl" dir="ltr" rows="4"></textarea>
+      <label class="check"><input type="checkbox" id="bypassIran" /><span class="tgl"></span>سایت‌های ایرانی مستقیم باز شوند (Bypass Iran)</label>
+      <div class="modal-actions">
+        <button class="chip" id="btnOpenData">پوشه داده‌ها</button>
+        <span style="flex:1"></span>
+        <button class="chip" id="btnCancelSettings">انصراف</button>
+        <button class="btn-glow" id="btnSaveSettings">ذخیره</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="confirmModal">
+    <div class="modal-card glass small">
+      <p id="confirmText"></p>
+      <div class="modal-actions"><span style="flex:1"></span><button class="chip" id="confirmNo">نه</button><button class="btn-glow" id="confirmYes">بله</button></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

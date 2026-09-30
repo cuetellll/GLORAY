@@ -1,0 +1,39 @@
+{
+  "name": "glowray",
+  "version": "1.0.0",
+  "description": "GlowRay - modern, animated sing-box VPN client for Windows",
+  "main": "src/main.js",
+  "author": "mahyar",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "core": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/get-core.ps1",
+    "dist": "electron-builder --win --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.mahyar.glowray",
+    "productName": "GlowRay",
+    "directories": { "output": "dist" },
+    "files": ["src/**/*", "package.json"],
+    "extraResources": [{ "from": "bin", "to": "bin", "filter": ["sing-box.exe"] }],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "GlowRay",
+      "artifactName": "GlowRay-Setup-${version}.exe"
+    },
+    "portable": { "artifactName": "GlowRay-Portable-${version}.exe" }
+  }
+}
